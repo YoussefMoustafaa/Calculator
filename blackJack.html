@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackJack Game</title>
+    <link rel="stylesheet" href="blackJack.css">
+    <style>
+        body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    text-align: center;
+    background-color: rgb(0, 71, 0);
+    color:  white;
+    font-weight: bold;
+}
+
+h1 {
+    color: goldenrod;
+}
+
+#message-el {
+    font-style: italic;
+}
+
+button {
+    color: #016f32;
+    background-color: goldenrod;
+    
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: none;
+    border-radius: 2px;
+    margin-bottom: 5px;
+}
+
+#note-el {
+    text-align: start;
+}
+    </style>
+</head>
+<body>
+    <h1>BlackJack</h1>
+    <p id="message-el">Do you want to play a round?</p>
+    <p id="cards-el">Cards: </p>
+    <p id="sum-el">Sum: </p>
+    <button onclick="startGame()">START GAME</button>
+    <br>
+    <button onclick="newCard()">NEW CARD</button>
+    <p id="tries-el">Tries: 0</p>
+    <p id="player-el"></p>
+    <p>
+        Start Game: -10
+        <br>
+        Blackjack: +50
+    </p>
+    <p id="note-el">
+        Notes:
+        <br>
+        _ The rules are simple, you start the game having two cards,
+        <br>
+        _ The sum of them should be 21 to win a blackjack!
+        <br>
+        _ If didn't, you can draw a new card but be careful not to exceed 21!
+        <br>
+        _ Don't worry if you lost you can always start again! Keep in mind you have only 30 tries!
+        <br>
+        _ Screenshot your final score and send it to me to see who has the highest score!
+    </p>
+
+    <script>
+        //dont forget to link the js file again!
+        let player = {
+    name: "Your score",
+    chips: 200
+}
+let cards = []
+let sum = 0
+let tries = 0
+let blackjack = false
+let isAlive = false
+let message = ""
+let messageEl = document.getElementById("message-el")
+let sumEl = document.getElementById("sum-el")
+let cardsEl = document.getElementById("cards-el")
+let playerEl = document.getElementById("player-el")
+let noteEl = document.getElementById("note-el")
+let triesEl = document.getElementById("tries-el")
+
+playerEl.textContent = player.name + ": " + player.chips + "$"
+
+function getRandomCard() {
+    let randomNumber = Math.floor( Math.random() * 13) + 1
+    if (randomNumber > 10) {
+        return 10
+    } else if (randomNumber === 1) {
+        return 11
+    } else {
+        return randomNumber
+    }
+}
+
+function startGame() {
+    if (tries != 30) {
+        let firstCard = getRandomCard()
+    let secondCard = getRandomCard()
+    cards = [firstCard, secondCard]
+    sum = firstCard + secondCard
+    isAlive = true
+    blackjack = false
+    noteEl.textContent = ""
+    tries += 1
+    triesEl.textContent = "Tries: " + tries
+    player.chips = player.chips - 10
+    playerEl.textContent = player.name + ": " + player.chips + "$"
+    renderGame()
+    } else if (tries === 30) {
+        messageEl.textContent = "Ooops! You've run out of tries! Refresh the page to play again!"
+    }
+    if (player.chips === 0) {
+        messageEl.textContent = "Ooops! There's no money left! Refresh the page to play again!"
+    }
+}
+
+function renderGame() {
+    cardsEl.textContent = "Cards: "
+    const lastIndex = cards.length - 1
+    for (let i = 0; i < cards.length; i++) {
+        if (i === lastIndex) {
+            cardsEl.textContent += cards[i]
+        } else {
+        cardsEl.textContent += cards[i] + ", "
+        }
+    }
+    sumEl.textContent = "Sum: " + sum
+if (sum <= 20) {
+    message = "Do you want to draw another card?"
+    
+} else if (sum === 21) {
+    message = "You've got a blackjack!"
+    blackjack = true
+    player.chips += 50
+    playerEl.textContent = player.name + ": " + player.chips + "$"
+} else {
+    message = "You've lost this round!"
+    isAlive = false
+}
+messageEl.textContent = message
+}
+
+function newCard() {
+    if (isAlive === true && blackjack === false) {
+        let card = getRandomCard()
+        sum += card
+        cards.push(card)
+        renderGame()
+    }
+}
+    </script>
+</body>
+</html>
